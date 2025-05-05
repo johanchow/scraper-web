@@ -1,37 +1,34 @@
 // 文章来源站点
 export enum ArticleSource {
-  Coinbase = 'coinbase',
+  Coinbase = 'coinbase'
 }
 
 // 加载更多数据方式
-export enum LoadMoreEnum {
-  Button = 'button',
-  InfiniteScroll = 'infiniteScroll',
-}
-
-export interface LoadMoreConfig {
+export type LoadMoreConfig = {
   type: LoadMoreEnum;
-  buttonSelector?: string;
+  paginationSelector?: string;
   infiniteScrollSelector?: string;
-  maxPages?: number;
+};
+export enum LoadMoreEnum {
+  /* 没有更多 */
+  None = 'none',
+  /* 翻页 */
+  Pagination = 'pagination',
+  /* 无限滚动 */
+  InfiniteScroll = 'infinite-scroll',
 }
 
-export interface PageConfig {
+export type PageConfig = {
   url: string;
-  viewport?: {
-    width: number;
-    height: number;
-  };
-  userAgent?: string;
+  proxyUrl?: string;
 }
 
-export interface ScraperResult {
+export type ScraperResult = {
   id: string;
   title: string;
   link: string;
-  date?: string;
-  author?: string;
-  summary?: string;
-  source: ArticleSource;
+  date: string;
+  summary: string;
+  source: ArticleSource.Coinbase
 }
 

@@ -2,13 +2,14 @@ import puppeteer, { Browser, LaunchOptions, Page } from 'puppeteer';
 import { retryOperation } from '../util';
 import { LoadMoreConfig, LoadMoreEnum, PageConfig, ScraperResult } from "../typing";
 
-export default class BaseScraper {
+class BaseScraper {
   private config: PageConfig;
-  private results: ScraperResult[] = [];
+  private results: ScraperResult[];
   private browser: Browser | null = null;
 
   constructor(config: PageConfig) {
     this.config = config;
+    this.results = [];
   }
 
   private async humanLikeDelay(): Promise<void> {
@@ -73,8 +74,6 @@ export default class BaseScraper {
 
     await page.setJavaScriptEnabled(true);
 
-    await page.goto(this.config.url, { waitUntil: 'networkidle0' });
-
     return page;
   }
 
@@ -137,7 +136,7 @@ export default class BaseScraper {
     }
   }
 
-  public async start(): Promise<void> {
+  public async start() {
     console.info('Scraper start');
     try {
       this.browser = await this.setupBrowser();
@@ -176,11 +175,9 @@ export default class BaseScraper {
       }
       console.info(`Scraper开始解析内容`);
       html = await page.content();
-      const results = await this.parseContent(html);
-      this.setResults(results);
+      await this.parseContent(html);
     } catch (error) {
       console.error('抓取过程中出错:', error);
-      throw error;
     } finally {
       if (this.browser) {
         await this.browser.close();
@@ -205,4 +202,6 @@ export default class BaseScraper {
     throw new Error('请在派生类中实现getLoadMoreConfig!');
   }
 }
+
+export default BaseScraper;
 
