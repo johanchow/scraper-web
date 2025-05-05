@@ -41,7 +41,6 @@ const ArticleList: React.FC = () => {
       {articles.map((article) => (
         <div key={article.id} className="article-card">
           <h2>{article.title}</h2>
-          {article.author && <p className="author">作者: {article.author}</p>}
           {article.date && <p className="date">发布日期: {article.date}</p>}
           {article.summary && <p className="summary">{article.summary}</p>}
           <a href={article.link} target="_blank" rel="noopener noreferrer" className="read-more">

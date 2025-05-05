@@ -13,7 +13,7 @@ class BaseScraper {
   }
 
   private async humanLikeDelay(): Promise<void> {
-    const delay = 3 * 1000;
+    const delay = 1 * 1000;
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
 
@@ -89,9 +89,9 @@ class BaseScraper {
         const hasNextPage = await page.$(nextPageSelector);
         if (!hasNextPage) break;
 
-        await this.humanLikeDelay();
         await page.click(nextPageSelector);
-        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+        await this.humanLikeDelay();
+        // await page.waitForNavigation({ waitUntil: 'networkidle0' });
         await this.humanLikeScroll(page);
 
         const html = await page.content();
@@ -120,9 +120,11 @@ class BaseScraper {
           break;
         }
 
-        await this.humanLikeDelay();
+        console.log(`第${scrollCount+1}次点击加载更多`)
         await loadMoreButton.click();
-        await page.waitForResponse(response => response.url().includes('api') || response.url().includes('load'));
+        await this.humanLikeDelay();
+        // 等待某个接口完成
+        // await page.waitForResponse(response => response.url().includes('api') || response.url().includes('load'));
         await this.humanLikeScroll(page);
 
         const html = await page.content();
@@ -170,7 +172,7 @@ class BaseScraper {
         await this.handleInfiniteScroll(
           page,
           loadMoreConfig.infiniteScrollSelector!,
-          10 // 最多加载10页
+          5 // 最多加载5页
         );
       }
       console.info(`Scraper开始解析内容`);
@@ -190,8 +192,8 @@ class BaseScraper {
     return this.results;
   }
 
-  protected setResults(results: ScraperResult[]): void {
-    this.results = results;
+  protected addResults(results: ScraperResult[]): void {
+    this.results = [...this.results, ...results];
   }
 
   protected async parseContent(html: string): Promise<ScraperResult[]> {

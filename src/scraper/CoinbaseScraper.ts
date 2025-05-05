@@ -71,7 +71,7 @@ class CoinbaseScraper extends BaseScraper {
       }
     });
 
-    this.setResults(results);
+    this.addResults(results);
     return results;
   }
 
