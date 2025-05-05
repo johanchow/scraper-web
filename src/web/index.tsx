@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { ScraperResult } from '../typing';
 import './index.css';
 
+const ApiHost = '//localhost:9080';
+
 const ArticleList: React.FC = () => {
   const [articles, setArticles] = useState<ScraperResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -11,12 +13,12 @@ const ArticleList: React.FC = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch('/api/articles');
+        const response = await fetch(`${ApiHost}/coinbase/listResults`);
         if (!response.ok) {
           throw new Error('获取文章列表失败');
         }
         const data = await response.json();
-        setArticles(data);
+        setArticles(data.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : '未知错误');
       } finally {
@@ -28,7 +30,7 @@ const ArticleList: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div className="loading">加载中...</div>;
+    return <div className="loading">加载中</div>;
   }
 
   if (error) {
@@ -36,18 +38,37 @@ const ArticleList: React.FC = () => {
   }
 
   return (
-    <div className="article-list">
-      <h1>文章列表</h1>
-      {articles.map((article) => (
-        <div key={article.id} className="article-card">
-          <h2>{article.title}</h2>
-          {article.date && <p className="date">发布日期: {article.date}</p>}
-          {article.summary && <p className="summary">{article.summary}</p>}
-          <a href={article.link} target="_blank" rel="noopener noreferrer" className="read-more">
-            阅读更多
-          </a>
-        </div>
-      ))}
+    <div className="container">
+      <h1 className="page-title">文章列表</h1>
+      <div className="article-list">
+        {articles.map((article, index) => (
+          <div key={article.id} className="article-item">
+            <div className="article-number">{index + 1}</div>
+            <div className="article-content">
+              <h2 className="article-title">{article.title}</h2>
+              <div className="article-meta">
+                {article.author && (
+                  <span className="article-author">{article.author}</span>
+                )}
+                {article.date && (
+                  <span className="article-date">{article.date}</span>
+                )}
+              </div>
+              {article.summary && (
+                <p className="article-summary">{article.summary}</p>
+              )}
+            </div>
+            <a
+              href={article.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="article-link"
+            >
+              查看详情
+            </a>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
