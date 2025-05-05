@@ -57,8 +57,12 @@ class BaseScraper {
       ],
     };
 
-    if (this.config.proxyUrl) {
-      launchOptions.args?.push(`--proxy-server=${this.config.proxyUrl}`);
+    // 如果有代理列表，随机选择一个代理
+    if (this.config.proxyList.length > 0) {
+      const randomProxy = this.config.proxyList[Math.floor(Math.random() * this.config.proxyList.length)];
+      const proxyUrl = `http://${randomProxy.host}:${randomProxy.port}`;
+      launchOptions.args?.push(`--proxy-server=${proxyUrl}`);
+      console.info(`使用代理: ${proxyUrl}`);
     }
 
     return await puppeteer.launch(launchOptions);

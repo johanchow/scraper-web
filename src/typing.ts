@@ -20,7 +20,10 @@ export enum LoadMoreEnum {
 
 export type PageConfig = {
   url: string;
-  proxyUrl?: string;
+  proxyList: {
+    host: string;
+    port: number;
+  }[];
 }
 
 export type ScraperResult = {
